@@ -4,7 +4,7 @@ using Colorful;
 using System.Drawing;
 using System.Web;
 using Console = System.Console;
-
+//using System.Threading;
 namespace CodeJam4
 {
     internal class Program
@@ -15,6 +15,13 @@ namespace CodeJam4
             var web = new HtmlWeb();
             return web.Load(url);
         }
+        /// Add a simple divider line to separate different sections
+        //public static void PrintDivider(char dividerChar = '-')
+        //{
+        //    string divider = new string(dividerChar, Console.WindowWidth);
+        //    Colorful.Console.WriteLine(divider, Color.Pink);  // Highlight change with pink divider
+        //}
+
 
         public static void GrabHeadline(HtmlDocument doc)
         {

@@ -11,9 +11,16 @@ namespace CodeJam4
     {
         public static HtmlDocument LoadUrl(string fileUrl)
         {
-            var url = fileUrl;
             var web = new HtmlWeb();
-            return web.Load(url);
+            try
+            {
+                return web.Load(fileUrl);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error loading the URL: " + ex.Message, Color.Red);
+                return null;
+            }
         }
 
         public static void GrabHeadline(HtmlDocument doc)
@@ -105,17 +112,41 @@ namespace CodeJam4
             }
         }
 
+        // Validate the URL format and ensure it contains 'live-blog' and 'nbcnews.com'
+        public static bool IsValidUrl(string url)
+        {
+            bool isValidUri = Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult)
+                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                   
+            bool containsRequiredKeywords = url.Contains("live-blog") && url.Contains("nbcnews.com");
+
+            return isValidUri && containsRequiredKeywords;
+        }
+
         static void Main(string[] args)
         {
+            bool restartProgram = true;
 
+            while (restartProgram)
+            {
             //System.Console.BackgroundColor = ConsoleColor.Gray;
             bool vrajMode = false;
 
             string figletText = FiggleFonts.Standard.Render("NBC News Outliner!");
             Colorful.Console.WriteWithGradient(figletText, Color.LemonChiffon, Color.AliceBlue);
 
-            Console.WriteLine("Enter Vraj Mode? [Y/N]");
-            string ans = Console.ReadLine();
+            string? ans;
+            do
+            {
+                Console.WriteLine("Enter Vraj Mode? [Y/N]");
+                ans = Console.ReadLine()?.ToUpper();
+
+                if (ans != "Y" && ans != "N")
+                {
+                    Console.WriteLine("Invalid input. Please enter 'Y' or 'N'.", Color.Red);
+                }
+
+            } while (ans != "Y" && ans != "N");
 
             if (ans.Equals('Y'))
             {
@@ -123,15 +154,48 @@ namespace CodeJam4
                 System.Console.BackgroundColor = ConsoleColor.Red;
             }
 
-            Colorful.Console.WriteLine("Enter the url of a NBC live coverage news article that you want to create an outline of:", Color.Fuchsia);
+            // URL input and validation
+            string url;
+            do
+            {
+                Colorful.Console.WriteLine("Enter the URL of an NBC live coverage news article:", Color.Fuchsia);
+                url = Colorful.Console.ReadLine();
 
-            string? url = Colorful.Console.ReadLine();
+                if (!IsValidUrl(url))
+                {
+                    Console.WriteLine("Invalid URL. Please enter a valid URL (must start with http or https).", Color.Red);
+                }
+
+            } while (!IsValidUrl(url));
             var doc = LoadUrl(url);
 
             GrabHeadline(doc);
             
-            PrintContent(doc);
+            PrintContent(doc);// Ask user to restart or quit
+                string? restartAns;
+                do
+                {
+                    Console.WriteLine("Would you like to restart or quit? [R/Q]");
+                    restartAns = Console.ReadLine()?.ToUpper();
 
+                    if (restartAns != "R" && restartAns != "Q")
+                    {
+                        Console.WriteLine("Invalid input. Please enter 'R' to restart or 'Q' to quit.", Color.Red);
+                    }
+
+                } while (restartAns != "R" && restartAns != "Q");
+
+                if (restartAns == "Q")
+                {
+                    restartProgram = false;  // Exit the loop to quit the program
+                }
+                else
+                {
+                    Console.Clear();  // Clear the console to restart
+                }
+            }
+
+            Console.WriteLine("Goodbye!");
         }
     }
 }

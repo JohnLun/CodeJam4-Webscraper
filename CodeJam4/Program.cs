@@ -63,7 +63,8 @@ namespace CodeJam4
 
             //Getting Content from each subheading.
 
-            if (subTitleContentNodes != null)
+            if (subTitleContentNodes != null) // Some of the headlines that contains apostrophes show an error in the middle of the word (ex. "What&#x27;s the most valuable NFL franchise?"
+                                              // Finding a way to be able to show the apostrophe properly should be an easy fix
             {
                 foreach (var subTitleContentNode in subTitleContentNodes)
                 {
@@ -88,7 +89,8 @@ namespace CodeJam4
 
             for (int i = 0; i < subTitles.Count; i++)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
+                // for some of the articles, the contents don't show past the article title, might have to be reviewed with more test cases to see why that is
+                Console.ForegroundColor = ConsoleColor.Green; 
                 Console.WriteLine(subTitles[i], Color.Aquamarine); // prints the subtitle
                 Console.ResetColor();
                 List<string> contents = subTitleContents[i];
@@ -120,7 +122,7 @@ namespace CodeJam4
             if (ans.Equals('Y'))
             {
                 vrajMode = true;
-                System.Console.BackgroundColor = ConsoleColor.Red;
+                System.Console.BackgroundColor = ConsoleColor.Red; 
             }
 
             Colorful.Console.WriteLine("Enter the url of a NBC live coverage news article that you want to create an outline of:", Color.Fuchsia);
